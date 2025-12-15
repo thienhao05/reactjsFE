@@ -1,33 +1,37 @@
 const { createStore } = window.Redux;
 
 //action là object vd: {type: 'increment'}
+// [
+//   { key: 1527, name: Task1 },
+//   { key: 1927, name: Task2 },
+// ];
+//state tách rồi hoàn toàn với cái state cũ
 const initalState = [];
 const todoListReducer = (state = initalState, action) => {
   //state là trạng thái hiện tại
   switch (action.type) {
     case "add":
-      var newState = [...state];
-      newState.push(action.payload);
+      var newState = [];
+
+      for (const el of state) {
+        newState.push({ ...el }); //lấy từng cái thuộc tính của el vào đây
+        // newState.push({ key: 1257, name: "Task1" });
+      }
+      newState.push({ ...action.payload }); //payload gồm key: 1927, name: Task2
       return newState;
     case "remove":
-      if (typeof action.payload == "number") {
-        var newState = [...state];
-        const key = action.payload;
-        const index = key - 1; //đã tính từ 0
-        newState.splice(index, 1);
-        return newState;
-      } else {
-        var newState = [];
-        const keyList = action.payload;
-        for (let i = 0; i <= state.length - 1; i++) {
-          const key = i + 1;
-          if (!keyList.includes(key)) {
-            const task = state[i];
-            newState.push(task);
-          }
+      //later
+      var newState = [];
+
+      for (const el of state) {
+        const removeKey = Number(action.payload);
+        if (el.key != removeKey) {
+          newState.push({ ...el });
         }
-        return newState;
+        //lấy từng cái thuộc tính của el vào đây
+        // newState.push({ key: 1257, name: "Task1" });
       }
+      return newState;
 
     default:
       return state;
@@ -43,18 +47,17 @@ store.subscribe(() => {
   let key = 1;
   for (const todo of todoList) {
     const liTag = document.createElement("li");
-    liTag.textContent = todo;
+    liTag.textContent = todo.name;
+    liTag.setAttribute("key", todo.key);
     const btnEl = document.createElement("button");
     btnEl.textContent = "Xóa";
     btnEl.setAttribute("type", "button");
-    btnEl.setAttribute("key", key);
 
     btnEl.addEventListener("click", deleteTodo);
     liTag.appendChild(btnEl);
     //Add thêm checkbox để hỗ trợ xóa item
     const chkEl = document.createElement("input");
     chkEl.setAttribute("type", "checkbox");
-    chkEl.setAttribute("key", key);
 
     liTag.prepend(chkEl);
 
@@ -67,7 +70,7 @@ store.subscribe(() => {
 });
 
 const deleteTodo = (event) => {
-  const key = event.target.getAttribute("key");
+  const key = event.target.parentElement.getAttribute("key");
   store.dispatch({ type: "remove", payload: key });
 };
 
@@ -77,7 +80,8 @@ formTag.onsubmit = function (e) {
   e.preventDefault();
   const inputTag = formTag.querySelector("input");
   const taskName = inputTag.value;
-  store.dispatch({ type: "add", payload: taskName });
+  const keyName = Math.floor(Math.random() * 10000);
+  store.dispatch({ type: "add", payload: { key: keyName, name: taskName } });
   this.reset();
 };
 
@@ -95,12 +99,9 @@ deleteTodoList.onclick = function () {
   const olEl = document.querySelector("#view-todolist");
 
   const checkedEls = olEl.querySelectorAll("input[type=checkbox]:checked");
-  const keys = [];
   for (const checkedEl of checkedEls) {
-    let key = checkedEl.getAttribute("key");
-    keys.push(Number(key));
-  }
-  if (keys.length > 0) {
-    store.dispatch({ type: "remove", payload: keys });
+    const liTag = checkedEl.parentElement;
+    const removeKey = liTag.getAttribute("key");
+    store.dispatch({ type: "remove", payload: removeKey });
   }
 };

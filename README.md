@@ -77,3 +77,8 @@ const todoListReducer = (state = initalState, action) => {
   }
 };
 ```
+
+![alt text](image-1.png)
+
+kết quả khi remake: good version
+![alt text](image-2.png)
