@@ -1,22 +1,19 @@
-//redux thì nó sẽ ko liên quan gì đến reactJS mà
-//nó chỉ là thư viện giúp cho mình quản lý state
 const { createStore } = window.Redux;
 
 //action là object vd: {type: 'increment'}
-const initalState = []; //danh sách là array công việc
-
+const initalState = [];
 const todoListReducer = (state = initalState, action) => {
   //state là trạng thái hiện tại
   switch (action.type) {
     case "add":
-      var newState = [...state]; //newState = state //ghi đè vào bộ nhớ ăn mày luôn
+      var newState = [...state];
       newState.push(action.payload);
       return newState;
     case "remove":
       if (typeof action.payload == "number") {
-        var newState = [...state]; //copy ra 1 cái state mới
-        const key = action.payload; //danh sách của mình tính là 0 nhưng mà mình lưu là 1
-        const index = key - 1; //danh sách tính từ 0
+        var newState = [...state];
+        const key = action.payload;
+        const index = key - 1; //đã tính từ 0
         newState.splice(index, 1);
         return newState;
       } else {
@@ -31,6 +28,7 @@ const todoListReducer = (state = initalState, action) => {
         }
         return newState;
       }
+
     default:
       return state;
   }
@@ -41,30 +39,29 @@ let store = createStore(todoListReducer);
 store.subscribe(() => {
   const todoList = store.getState();
   const olTag = document.querySelector("#view-todolist");
-  olTag.innerHTML = ""; //nhiều cái lặp lại quá, nội dung của nó về rỗng
-  //lần 1 thêm thẻ li, refresh mỗi lần lại
-  let key = 0;
+  olTag.innerHTML = "";
+  let key = 1;
   for (const todo of todoList) {
     const liTag = document.createElement("li");
     liTag.textContent = todo;
-    //add button
     const btnEl = document.createElement("button");
     btnEl.textContent = "Xóa";
     btnEl.setAttribute("type", "button");
     btnEl.setAttribute("key", key);
-    //xóa nút
+
     btnEl.addEventListener("click", deleteTodo);
-    //bỏ nó vô trong liTag
     liTag.appendChild(btnEl);
-    //
-    //add checkbox for supporting to delete item
-    const chkEL = document.createElement("input");
-    chkEL.setAttribute("type", "checkbox");
-    chkEL.setAttribute("key", key);
-    liTag.prepend(chkEL);
+    //Add thêm checkbox để hỗ trợ xóa item
+    const chkEl = document.createElement("input");
+    chkEl.setAttribute("type", "checkbox");
+    chkEl.setAttribute("key", key);
+
+    liTag.prepend(chkEl);
+
     olTag.appendChild(liTag);
     key++;
   }
+
   const qtyEl = document.querySelector(".qty");
   qtyEl.innerHTML = todoList.length;
 });
@@ -75,36 +72,35 @@ const deleteTodo = (event) => {
 };
 
 const formTag = document.querySelector("form");
-
 formTag.onsubmit = function (e) {
+  //
   e.preventDefault();
   const inputTag = formTag.querySelector("input");
-  const tagName = inputTag.value;
-  store.dispatch({ type: "add", payload: tagName });
-  this.reset(); //reset lại
+  const taskName = inputTag.value;
+  store.dispatch({ type: "add", payload: taskName });
+  this.reset();
 };
 
-const chkAll = document.querySelector(".chk-all");
-chkAll.onclick = function () {
+const chkAllEl = document.querySelector(".chk-all");
+chkAllEl.onclick = function () {
   const olEl = document.querySelector("#view-todolist");
-  //những thằng nào mà chưa check thì mình lấy ra check cho nó
   const unChkEls = olEl.querySelectorAll("input[type=checkbox]:not(:checked)");
   for (const unChkEl of unChkEls) {
     unChkEl.checked = true;
   }
 };
+
 const deleteTodoList = document.querySelector(".delete-todolist");
 deleteTodoList.onclick = function () {
   const olEl = document.querySelector("#view-todolist");
+
   const checkedEls = olEl.querySelectorAll("input[type=checkbox]:checked");
   const keys = [];
   for (const checkedEl of checkedEls) {
     let key = checkedEl.getAttribute("key");
-    //state bị change rồi => mình xóa bị sai
-    //những thằng check rồi thì xóa
     keys.push(Number(key));
   }
   if (keys.length > 0) {
-    store.dispatch({ type: "remove", payload: keys }); //khi mà mình xóa thì cái
+    store.dispatch({ type: "remove", payload: keys });
   }
 };
