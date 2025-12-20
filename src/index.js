@@ -1,13 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import bankReducer from "./reducer/bankReducer";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const store = createStore(bankReducer);
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      {/* <App increment={5} /> */}
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 

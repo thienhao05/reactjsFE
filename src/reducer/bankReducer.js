@@ -9,7 +9,7 @@ export default function bankReducer(state = initialState, action) {
       newState = { money: state.money - action.payload };
       return newState;
     default:
+      // return { ...state, teotem: 5 };
       return state;
   }
 }
-//21:21
