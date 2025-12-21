@@ -3,7 +3,9 @@
 //   { key: 1927, name: Task2 },
 // ];
 //state tách rồi hoàn toàn với cái state cũ
-const initalState = [];
+
+let initalState = JSON.parse(localStorage.getItem("reactTodoList")) || [];
+
 const todoListReducer = (state = initalState, action) => {
   //state là trạng thái hiện tại
   let newState;

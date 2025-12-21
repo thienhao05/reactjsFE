@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 function App() {
   const todoList = useSelector((state) => state);
+  localStorage.setItem("reactTodoList", JSON.stringify(todoList));
   const dispatch = useDispatch();
 
   function handleSubmit(event) {
